@@ -103,12 +103,14 @@ func PopulateRates() {
         }
       }
     } else {
-      for i, v := range currencies {
-        if i != 0 {
-          dateString := strings.Replace(line[0], "-", "", -1)
-          date, _ := strconv.ParseInt(dateString, 10, 0)
-          rate, _ := strconv.ParseFloat(line[i], 32)
-          db[v][date] =  Rate{From: "EUR", Rate: rate}
+      if strings.HasPrefix(line[0], "2018") {
+        for i, v := range currencies {
+          if i != 0 {
+            dateString := strings.Replace(line[0], "-", "", -1)
+            date, _ := strconv.ParseInt(dateString, 10, 0)
+            rate, _ := strconv.ParseFloat(line[i], 32)
+            db[v][date] =  Rate{From: "EUR", Rate: rate}
+          }
         }
       }
     }
