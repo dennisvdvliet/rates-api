@@ -1,0 +1,15 @@
+{
+	"ImportPath": "rates-api",
+	"GoVersion": "go1.11",
+	"GodepVersion": "v80",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.6.2-12-g3d80bc8",
+			"Rev": "3d80bc801bb034e17cae38591335b3b1110f1c47"
+		}
+	]
+}
