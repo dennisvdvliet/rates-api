@@ -76,6 +76,7 @@ func GetRate(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(rate)
     return
   }
+  w.WriteHeader(404)
   json.NewEncoder(w).Encode(Message{Message: "No rate found"})
 }
 
