@@ -50,10 +50,10 @@ type Message struct {
 
 var currencyList []string
 
-var db map[string]map[int64]Rate
+var db map[string]map[int64]float64
 
 func GetRate(w http.ResponseWriter, r *http.Request) {
-  var rate Rate
+  var rate float64
   var dateIndex int64
   params := mux.Vars(r)
   to := strings.ToUpper(params["to"])
@@ -63,17 +63,15 @@ func GetRate(w http.ResponseWriter, r *http.Request) {
 
   for i := 0; i < 4; i++ {
     dateIndex, _ = strconv.ParseInt(dateTime.Format(layout), 10, 0)
-    if db[to][dateIndex].From == "EUR" {
+    if db[to][dateIndex] != 0.0 {
       rate = db[to][dateIndex]
       break
     }
     dateTime = dateTime.Add(time.Hour * -24)
   }
 
-  if rate.From == "EUR" {
-    rate.Date = dateIndex
-    rate.To = to
-    json.NewEncoder(w).Encode(rate)
+  if rate != 0.0 {
+    json.NewEncoder(w).Encode(Rate{From: "EUR", To: to, Date: dateIndex, Rate: db[to][dateIndex]})
     return
   }
   w.WriteHeader(404)
@@ -85,7 +83,7 @@ func PopulateRates() {
   reader := csv.NewReader(bufio.NewReader(csvFile))
   var currencies []string
 
-  db = make(map[string]map[int64]Rate)
+  db = make(map[string]map[int64]float64)
   for {
     line, error := reader.Read()
     if error == io.EOF {
@@ -99,20 +97,20 @@ func PopulateRates() {
       for i, v := range currencies {
         if i != 0 {
           currencyList = append(currencyList, strings.TrimSpace(v))
-          db[strings.TrimSpace(v)] = make(map[int64]Rate)
+          db[strings.TrimSpace(v)] = make(map[int64]float64)
         }
       }
     } else {
-      if strings.HasPrefix(line[0], "2018") {
+//      if strings.HasPrefix(line[0], "2018") {
         for i, v := range currencies {
           if i != 0 {
             dateString := strings.Replace(line[0], "-", "", -1)
             date, _ := strconv.ParseInt(dateString, 10, 0)
             rate, _ := strconv.ParseFloat(line[i], 32)
-            db[v][date] =  Rate{From: "EUR", Rate: rate}
+            db[v][date] =  rate
           }
         }
-      }
+     // }
     }
   }
 }
