@@ -61,7 +61,7 @@ func GetRate(w http.ResponseWriter, r *http.Request) {
   layout := "20060102"
   dateTime, _ := time.Parse(layout, params["date"])
 
-  for i := 0; i < 3; i++ {
+  for i := 0; i < 4; i++ {
     dateIndex, _ = strconv.ParseInt(dateTime.Format(layout), 10, 0)
     if db[to][dateIndex].From == "EUR" {
       rate = db[to][dateIndex]
